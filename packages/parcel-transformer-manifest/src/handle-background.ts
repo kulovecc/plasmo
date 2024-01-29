@@ -91,7 +91,7 @@ function handleMV3Background(program: MV3Data) {
     )
 
     // Since we bundle everything, and sw import is static (not async), we can ignore type module.
-    if (!!program.background.type) {
+    if (program.background.type) {
       delete program.background.type
     }
   }

@@ -28,7 +28,7 @@ export function createBundle(opts: {
     }
   }
 
-  let asset = nullthrows(opts.asset)
+  const asset = nullthrows(opts.asset)
   return {
     uniqueKey: opts.uniqueKey,
     assets: new Set([asset]),

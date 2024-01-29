@@ -26,7 +26,7 @@ const MODULE_BY_NAME_RE = /\.module\./
 // TODO: Use language-specific config files during preprocessing
 export default new Transformer({
   async loadConfig({ config }) {
-    let conf = await config.getConfig(
+    const conf = await config.getConfig(
       [".vuerc", ".vuerc.json", ".vuerc.js", "vue.config.js"],
       { packageKey: "vue" }
     )
@@ -55,8 +55,8 @@ export default new Transformer({
   },
   async parse({ asset, options }) {
     // TODO: This parses the vue component multiple times. Fix?
-    let code = await asset.getCode()
-    let parsed = compiler.parse(code, {
+    const code = await asset.getCode()
+    const parsed = compiler.parse(code, {
       sourceMap: true,
       filename: asset.filePath
     })
@@ -69,7 +69,7 @@ export default new Transformer({
     }
 
     const descriptor = parsed.descriptor
-    let id = hashObject({
+    const id = hashObject({
       filePath: asset.filePath,
       source: options.mode === "production" ? code : null
     }).slice(-6)
@@ -91,12 +91,12 @@ export default new Transformer({
     }
   },
   async transform({ asset, options, resolve, config }) {
-    let { template, script, styles, customBlocks, id } = nullthrows(
+    const { template, script, styles, customBlocks, id } = nullthrows(
       await asset.getAST()
     ).program
-    let scopeId = "data-v-" + id
-    let hmrId = id + "-hmr"
-    let basePath = basename(asset.filePath)
+    const scopeId = "data-v-" + id
+    const hmrId = id + "-hmr"
+    const basePath = basename(asset.filePath)
     if (asset.pipeline != null) {
       return processPipeline({
         asset,
@@ -176,7 +176,7 @@ function createDiagnostic(err, filePath) {
     }
   }
   // TODO: codeframe
-  let diagnostic: Diagnostic = {
+  const diagnostic: Diagnostic = {
     message: escapeMarkdown(err.message),
     origin: "@parcel/transformer-vue",
     name: err.name,
@@ -228,8 +228,8 @@ async function processPipeline({
       }
       let content = template.content
       if (template.lang && !["htm", "html"].includes(template.lang)) {
-        let options = {} as any
-        let preprocessor = consolidate[template.lang]
+        const options = {} as any
+        const preprocessor = consolidate[template.lang]
         // Pug doctype fix (fixes #7756)
         switch (template.lang) {
           case "pug":
@@ -247,7 +247,7 @@ async function processPipeline({
         }
         content = await preprocessor.render(content, options)
       }
-      let templateComp = compiler.compileTemplate({
+      const templateComp = compiler.compileTemplate({
         filename: asset.filePath,
         source: content,
         inMap: template.src ? undefined : template.map,
@@ -266,7 +266,7 @@ async function processPipeline({
           })
         })
       }
-      let templateAsset: TransformerResult = {
+      const templateAsset: TransformerResult = {
         type: "js",
         uniqueKey: asset.id + "-template",
         ...(!template.src &&
@@ -326,7 +326,7 @@ async function processPipeline({
             }
           })
       }
-      let scriptAsset = {
+      const scriptAsset = {
         type,
         uniqueKey: asset.id + "-script",
         content: script.content,
@@ -339,8 +339,8 @@ async function processPipeline({
       return [scriptAsset]
     }
     case "style": {
-      let cssModules = {}
-      let assets = await Promise.all(
+      const cssModules = {}
+      const assets = await Promise.all(
         styles.map(async (style, i) => {
           if (style.src) {
             style.content = (
@@ -371,7 +371,7 @@ async function processPipeline({
                 }
               })
           }
-          let styleComp = await compiler.compileStyleAsync({
+          const styleComp = await compiler.compileStyleAsync({
             filename: asset.filePath,
             source: style.content,
             modules: style.module,
@@ -388,7 +388,7 @@ async function processPipeline({
               })
             })
           }
-          let styleAsset = {
+          const styleAsset = {
             type: "css",
             content: styleComp.code,
             sideEffects: true,
@@ -430,11 +430,11 @@ async function processPipeline({
       return assets
     }
     case "custom": {
-      let toCall = []
+      const toCall = []
       // To satisfy flow
       if (!config) return []
       const types = new Set()
-      for (let block of customBlocks) {
+      for (const block of customBlocks) {
         let { type, src, content, attrs } = block
         if (!config.customBlocks[type]) {
           // TODO: codeframe
@@ -493,7 +493,7 @@ async function processPipeline({
 }
 
 function createMap(rawMap, projectRoot: string) {
-  let newMap = new SourceMap(projectRoot)
+  const newMap = new SourceMap(projectRoot)
   newMap.addVLQMap(rawMap)
   return newMap
 }

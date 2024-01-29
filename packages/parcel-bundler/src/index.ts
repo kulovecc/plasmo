@@ -42,16 +42,16 @@ export default new Bundler({
 
   bundle({ bundleGraph, config }) {
     vLog("@plasmohq/parcel-bundler")
-    let targetMap = getEntryByTarget(bundleGraph) // Organize entries by target output folder/ distDir
+    const targetMap = getEntryByTarget(bundleGraph) // Organize entries by target output folder/ distDir
 
-    let graphs = []
+    const graphs = []
 
-    for (let entries of targetMap.values()) {
+    for (const entries of targetMap.values()) {
       // Create separate bundleGraphs per distDir
       graphs.push(createIdealGraph(bundleGraph, config, entries))
     }
 
-    for (let g of graphs) {
+    for (const g of graphs) {
       decorateLegacyGraph(g, bundleGraph) //mutate original graph
     }
   },

@@ -18,7 +18,7 @@ import { toUtf8 } from "./to-utf8"
 
 export default new Optimizer({
   async optimize({ contents, map, bundle, options, getSourceMapReference }) {
-    let code = (await blobToString(contents)) as string
+    const code = (await blobToString(contents)) as string
 
     if (!bundle.env.shouldOptimize) {
       return {
@@ -60,7 +60,7 @@ export default new Optimizer({
       let minifiedContents: string = nullthrows(result.code)
 
       let sourceMap = null
-      let resultMap = result.map
+      const resultMap = result.map
 
       if (resultMap && typeof resultMap !== "string") {
         sourceMap = new SourceMap(options.projectRoot)

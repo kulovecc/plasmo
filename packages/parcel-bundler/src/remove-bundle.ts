@@ -11,17 +11,17 @@ export function removeBundle(
   bundleId: NodeId,
   assetReference: DefaultMap<Asset, Array<[Dependency, Bundle]>>
 ) {
-  let bundle = nullthrows(bundleGraph.getNode(bundleId))
+  const bundle = nullthrows(bundleGraph.getNode(bundleId))
   invariant(bundle !== "root")
 
-  for (let asset of bundle.assets) {
+  for (const asset of bundle.assets) {
     assetReference.set(
       asset,
       assetReference.get(asset).filter((t) => !t.includes(bundle))
     )
 
-    for (let sourceBundleId of bundle.sourceBundles) {
-      let sourceBundle = nullthrows(bundleGraph.getNode(sourceBundleId))
+    for (const sourceBundleId of bundle.sourceBundles) {
+      const sourceBundle = nullthrows(bundleGraph.getNode(sourceBundleId))
       invariant(sourceBundle !== "root")
       sourceBundle.assets.add(asset)
       sourceBundle.size += asset.stats.size

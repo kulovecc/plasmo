@@ -8,7 +8,7 @@ import { quickPrompt } from "~features/helpers/prompt"
 export const getRawName = async () => {
   const [rawNameNonInteractive] = getNonFlagArgvs("init")
 
-  if (!!rawNameNonInteractive) {
+  if (rawNameNonInteractive) {
     vLog("Using user-provided name:", rawNameNonInteractive)
     return rawNameNonInteractive
   }

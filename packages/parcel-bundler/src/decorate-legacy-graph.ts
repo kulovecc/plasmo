@@ -13,34 +13,34 @@ export function decorateLegacyGraph(
   idealGraph: IdealGraph,
   bundleGraph: MutableBundleGraph
 ): void {
-  let idealBundleToLegacyBundle: Map<Bundle, LegacyBundle> = new Map()
-  let {
+  const idealBundleToLegacyBundle: Map<Bundle, LegacyBundle> = new Map()
+  const {
     bundleGraph: idealBundleGraph,
     dependencyBundleGraph,
     bundleGroupBundleIds
   } = idealGraph
-  let entryBundleToBundleGroup: Map<NodeId, BundleGroup> = new Map()
+  const entryBundleToBundleGroup: Map<NodeId, BundleGroup> = new Map()
 
   // Step Create Bundles: Create bundle groups, bundles, and shared bundles and add assets to them
-  for (let [bundleNodeId, idealBundle] of idealBundleGraph.nodes) {
+  for (const [bundleNodeId, idealBundle] of idealBundleGraph.nodes) {
     if (idealBundle === "root") continue
-    let entryAsset = idealBundle.mainEntryAsset
+    const entryAsset = idealBundle.mainEntryAsset
     let bundleGroup
     let bundle
 
     if (bundleGroupBundleIds.has(bundleNodeId)) {
-      let dependencies = dependencyBundleGraph
+      const dependencies = dependencyBundleGraph
         .getNodeIdsConnectedTo(
           dependencyBundleGraph.getNodeIdByContentKey(String(bundleNodeId)),
           ALL_EDGE_TYPES
         )
         .map((nodeId) => {
-          let dependency = nullthrows(dependencyBundleGraph.getNode(nodeId))
+          const dependency = nullthrows(dependencyBundleGraph.getNode(nodeId))
           invariant(dependency.type === "dependency")
           return dependency.value
         })
 
-      for (let dependency of dependencies) {
+      for (const dependency of dependencies) {
         bundleGroup = bundleGraph.createBundleGroup(
           dependency,
           idealBundle.target
@@ -96,22 +96,22 @@ export function decorateLegacyGraph(
 
     idealBundleToLegacyBundle.set(idealBundle, bundle)
 
-    for (let asset of idealBundle.assets) {
+    for (const asset of idealBundle.assets) {
       bundleGraph.addAssetToBundle(asset, bundle)
     }
   }
 
   // Step Internalization: Internalize dependencies for bundles
-  for (let [, idealBundle] of idealBundleGraph.nodes) {
+  for (const [, idealBundle] of idealBundleGraph.nodes) {
     if (idealBundle === "root") continue
-    let bundle = nullthrows(idealBundleToLegacyBundle.get(idealBundle))
+    const bundle = nullthrows(idealBundleToLegacyBundle.get(idealBundle))
 
-    for (let internalized of idealBundle.internalizedAssetIds) {
-      let incomingDeps = bundleGraph.getIncomingDependencies(
+    for (const internalized of idealBundle.internalizedAssetIds) {
+      const incomingDeps = bundleGraph.getIncomingDependencies(
         bundleGraph.getAssetById(internalized)
       )
 
-      for (let incomingDep of incomingDeps) {
+      for (const incomingDep of incomingDeps) {
         if (
           incomingDep.priority === "lazy" &&
           incomingDep.specifierType !== "url" &&
@@ -125,24 +125,24 @@ export function decorateLegacyGraph(
 
   // Step Add to BundleGroups: Add bundles to their bundle groups
   idealBundleGraph.traverse((nodeId, _, actions) => {
-    let node = idealBundleGraph.getNode(nodeId)
+    const node = idealBundleGraph.getNode(nodeId)
 
     if (node === "root") {
       return
     }
 
     actions.skipChildren()
-    let outboundNodeIds = idealBundleGraph.getNodeIdsConnectedFrom(nodeId)
-    let entryBundle = nullthrows(idealBundleGraph.getNode(nodeId))
+    const outboundNodeIds = idealBundleGraph.getNodeIdsConnectedFrom(nodeId)
+    const entryBundle = nullthrows(idealBundleGraph.getNode(nodeId))
     invariant(entryBundle !== "root")
-    let legacyEntryBundle = nullthrows(
+    const legacyEntryBundle = nullthrows(
       idealBundleToLegacyBundle.get(entryBundle)
     )
 
-    for (let id of outboundNodeIds) {
-      let siblingBundle = nullthrows(idealBundleGraph.getNode(id))
+    for (const id of outboundNodeIds) {
+      const siblingBundle = nullthrows(idealBundleGraph.getNode(id))
       invariant(siblingBundle !== "root")
-      let legacySiblingBundle = nullthrows(
+      const legacySiblingBundle = nullthrows(
         idealBundleToLegacyBundle.get(siblingBundle)
       )
       bundleGraph.createBundleReference(legacyEntryBundle, legacySiblingBundle)
@@ -150,32 +150,32 @@ export function decorateLegacyGraph(
   })
 
   // Step References: Add references to all bundles
-  for (let [asset, references] of idealGraph.assetReference) {
-    for (let [dependency, bundle] of references) {
-      let legacyBundle = nullthrows(idealBundleToLegacyBundle.get(bundle))
+  for (const [asset, references] of idealGraph.assetReference) {
+    for (const [dependency, bundle] of references) {
+      const legacyBundle = nullthrows(idealBundleToLegacyBundle.get(bundle))
       bundleGraph.createAssetReference(dependency, asset, legacyBundle)
     }
   }
 
-  for (let { from, to } of idealBundleGraph.getAllEdges()) {
-    let sourceBundle = nullthrows(idealBundleGraph.getNode(from))
+  for (const { from, to } of idealBundleGraph.getAllEdges()) {
+    const sourceBundle = nullthrows(idealBundleGraph.getNode(from))
 
     if (sourceBundle === "root") {
       continue
     }
 
     invariant(sourceBundle !== "root")
-    let legacySourceBundle = nullthrows(
+    const legacySourceBundle = nullthrows(
       idealBundleToLegacyBundle.get(sourceBundle)
     )
-    let targetBundle = nullthrows(idealBundleGraph.getNode(to))
+    const targetBundle = nullthrows(idealBundleGraph.getNode(to))
 
     if (targetBundle === "root") {
       continue
     }
 
     invariant(targetBundle !== "root")
-    let legacyTargetBundle = nullthrows(
+    const legacyTargetBundle = nullthrows(
       idealBundleToLegacyBundle.get(targetBundle)
     )
     bundleGraph.createBundleReference(legacySourceBundle, legacyTargetBundle)
