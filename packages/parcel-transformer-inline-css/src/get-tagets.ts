@@ -9,19 +9,19 @@
 import browserslist from "browserslist"
 import { browserslistToTargets } from "lightningcss"
 
-let cache = new Map()
+const cache = new Map()
 
 export function getTargets(browsers) {
   if (browsers == null) {
     return undefined
   }
 
-  let cached = cache.get(browsers)
+  const cached = cache.get(browsers)
   if (cached != null) {
     return cached
   }
 
-  let targets = browserslistToTargets(browserslist(browsers))
+  const targets = browserslistToTargets(browserslist(browsers))
 
   cache.set(browsers, targets)
   return targets

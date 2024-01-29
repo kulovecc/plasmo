@@ -149,7 +149,7 @@ export function createAnchorObserver<T>(Mount: PlasmoCSUI<T>) {
     for (const el of mountState.hostSet) {
       if (isMounted(el)) {
         const anchor = mountState.hostMap.get(el)
-        if (!!anchor) {
+        if (anchor) {
           if (anchor.type === "inline") {
             mountedInlineAnchorSet.add(anchor.element)
           } else if (anchor.type === "overlay") {

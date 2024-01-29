@@ -74,7 +74,7 @@ const render = createRender(
   }
 )
 
-if (!!observer) {
+if (observer) {
   observer.start(render)
 } else {
   render({

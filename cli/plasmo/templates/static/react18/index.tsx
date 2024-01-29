@@ -7,7 +7,7 @@ import { createRoot } from "react-dom/client"
 let __plasmoRoot: HTMLElement = null
 
 document.addEventListener("DOMContentLoaded", () => {
-  if (!!__plasmoRoot) {
+  if (__plasmoRoot) {
     return
   }
 

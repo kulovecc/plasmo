@@ -539,7 +539,7 @@ export abstract class PlasmoManifest<T extends ExtensionManifest = any> {
     }
 
     // Sanitize the BSS
-    if (!!output.browser_specific_settings) {
+    if (output.browser_specific_settings) {
       switch (this.browser) {
         case "edge":
         case "safari":
@@ -630,7 +630,7 @@ export abstract class PlasmoManifest<T extends ExtensionManifest = any> {
         return value
       }
 
-      if (!!value.match(/^\$(\w+)$/)) {
+      if (value.match(/^\$(\w+)$/)) {
         return this.combinedEnv[value.substring(1)] || undefined
       } else {
         return injectEnv(value, this.combinedEnv)

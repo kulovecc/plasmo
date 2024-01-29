@@ -30,10 +30,10 @@ function generateInstanceId(entries: Array<FilePath>): string {
 }
 
 export async function resolveOptions(initialOptions: InitialParcelOptions) {
-  let inputFS = initialOptions.inputFS || new NodeFS()
-  let outputFS = initialOptions.outputFS || new NodeFS()
-  let inputCwd = inputFS.cwd()
-  let outputCwd = outputFS.cwd()
+  const inputFS = initialOptions.inputFS || new NodeFS()
+  const outputFS = initialOptions.outputFS || new NodeFS()
+  const inputCwd = inputFS.cwd()
+  const outputCwd = outputFS.cwd()
   let entries: Array<FilePath>
 
   if (initialOptions.entries == null || initialOptions.entries === "") {
@@ -49,7 +49,7 @@ export async function resolveOptions(initialOptions: InitialParcelOptions) {
   let shouldMakeEntryReferFolder = false
 
   if (entries.length === 1 && !isGlob(entries[0])) {
-    let [entry] = entries
+    const [entry] = entries
 
     try {
       shouldMakeEntryReferFolder = (await inputFS.stat(entry)).isDirectory()
@@ -60,10 +60,10 @@ export async function resolveOptions(initialOptions: InitialParcelOptions) {
 
   // getRootDir treats the input as files, so getRootDir(["/home/user/myproject"]) returns "/home/user".
   // Instead we need to make the the entry refer to some file inside the specified folders if entries refers to the directory.
-  let entryRoot = getRootDir(
+  const entryRoot = getRootDir(
     shouldMakeEntryReferFolder ? [path.join(entries[0], "index")] : entries
   )
-  let projectRootFile =
+  const projectRootFile =
     (await resolveConfig(
       inputFS,
       path.join(entryRoot, "index"),
@@ -72,39 +72,39 @@ export async function resolveOptions(initialOptions: InitialParcelOptions) {
     )) || path.join(inputCwd, "index")
 
   // ? Should this just be rootDir
-  let projectRoot = path.dirname(projectRootFile)
-  let packageManager =
+  const projectRoot = path.dirname(projectRootFile)
+  const packageManager =
     initialOptions.packageManager ||
     new NodePackageManager(inputFS, projectRoot)
 
-  let cacheDir = path.resolve(outputCwd, initialOptions.cacheDir)
+  const cacheDir = path.resolve(outputCwd, initialOptions.cacheDir)
 
-  let cache =
+  const cache =
     initialOptions.cache ??
     (outputFS instanceof NodeFS
       ? new LMDBCache(cacheDir)
       : // @ts-ignore QUIRK: upstream def is outdated
         new FSCache(outputFS, cacheDir))
 
-  let mode = initialOptions.mode ?? "development"
-  let shouldOptimize =
+  const mode = initialOptions.mode ?? "development"
+  const shouldOptimize =
     initialOptions?.defaultTargetOptions?.shouldOptimize ??
     mode === "production"
-  let publicUrl = initialOptions?.defaultTargetOptions?.publicUrl ?? "/"
-  let distDir =
+  const publicUrl = initialOptions?.defaultTargetOptions?.publicUrl ?? "/"
+  const distDir =
     initialOptions?.defaultTargetOptions?.distDir != null
       ? path.resolve(inputCwd, initialOptions?.defaultTargetOptions?.distDir)
       : undefined
-  let shouldBuildLazily = initialOptions.shouldBuildLazily ?? false
-  let shouldContentHash =
+  const shouldBuildLazily = initialOptions.shouldBuildLazily ?? false
+  const shouldContentHash =
     initialOptions.shouldContentHash ?? initialOptions.mode === "production"
 
   if (shouldBuildLazily && shouldContentHash) {
     throw new Error("Lazy bundling does not work with content hashing")
   }
 
-  let env = initialOptions.env
-  let port = determinePort(initialOptions.serveOptions, process.env.PORT)
+  const env = initialOptions.env
+  const port = determinePort(initialOptions.serveOptions, process.env.PORT)
 
   return {
     config: getRelativeConfigSpecifier(
@@ -181,8 +181,8 @@ function getRelativeConfigSpecifier(
   if (specifier == null) {
     return undefined
   } else if (path.isAbsolute(specifier)) {
-    let resolveFrom = getResolveFrom(fs, projectRoot)
-    let relative = relativePath(path.dirname(resolveFrom), specifier)
+    const resolveFrom = getResolveFrom(fs, projectRoot)
+    const relative = relativePath(path.dirname(resolveFrom), specifier)
     // If the config is outside the project root, use an absolute path so that if the project root
     // moves the path still works. Otherwise, use a relative path so that the cache is portable.
     return relative.startsWith("..") ? specifier : relative
@@ -197,7 +197,7 @@ function determinePort(
   defaultPort: number = 1234
 ): number {
   function parsePort(port: string) {
-    let parsedPort = Number(port)
+    const parsedPort = Number(port)
 
     // return undefined if port number defined in .env is not valid integer
     if (!Number.isInteger(parsedPort)) {

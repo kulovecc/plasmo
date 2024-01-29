@@ -47,7 +47,7 @@ if (!parent || !parent.isParcelRequire) {
 
     const manifestChange = updatedAssets.find((e) => e.type === "json")
 
-    if (!!manifestChange) {
+    if (manifestChange) {
       const changedIdSet = new Set(updatedAssets.map((e) => e.id))
 
       const deps = Object.values(manifestChange.depsByBundle)

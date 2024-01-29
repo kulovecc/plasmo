@@ -54,7 +54,7 @@ function cascadeEnv(loadedEnvFiles: LoadedEnvFiles) {
         parsed: dotenv.parse(contents)
       })
 
-      if (!!result.parsed) {
+      if (result.parsed) {
         vLog(`Loaded env from ${name}`)
         const resultData = result.parsed || {}
 

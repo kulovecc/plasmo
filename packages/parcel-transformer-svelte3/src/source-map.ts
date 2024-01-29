@@ -29,8 +29,8 @@ export function extendSourceMap(
   sourceMap: any
 ): SourceMap | null {
   if (!sourceMap) return originalMap
-  let mapSourceRoot = dirname(filePath)
-  let map = new SourceMap(options.projectRoot)
+  const mapSourceRoot = dirname(filePath)
+  const map = new SourceMap(options.projectRoot)
   map.addVLQMap({
     ...sourceMap,
     sources: sourceMap.sources.map((s) => mapSourceMapPath(mapSourceRoot, s))

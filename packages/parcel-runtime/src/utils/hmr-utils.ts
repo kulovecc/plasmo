@@ -27,7 +27,7 @@ export function hmrDownload(asset: HmrAsset) {
 
 let supportsSourceURL = false
 try {
-  ;(0, eval)('throw new Error("test"); //# sourceURL=test.js')
+  (0, eval)('throw new Error("test"); //# sourceURL=test.js')
 } catch (err) {
   supportsSourceURL = err.stack.includes("test.js")
 }
@@ -93,7 +93,7 @@ function reloadCSS() {
 
   cssTimeout = setTimeout(function () {
     const links = document.querySelectorAll('link[rel="stylesheet"]')
-    for (var i = 0; i < links.length; i++) {
+    for (let i = 0; i < links.length; i++) {
       const href = links[i].getAttribute("href")
       const hostname = getHostname()
 
@@ -134,11 +134,11 @@ function hmrApply(bundle: ParcelBundle, asset: HmrAsset) {
         // Remove dependencies that are removed and will become orphaned.
         // This is necessary so that if the asset is added back again, the cache is gone, and we prevent a full page reload.
         // debugger
-        let oldDeps = modules[asset.id][1]
-        for (let dep in oldDeps) {
+        const oldDeps = modules[asset.id][1]
+        for (const dep in oldDeps) {
           if (!deps[dep] || deps[dep] !== oldDeps[dep]) {
-            let id = oldDeps[dep]
-            let parents = getParents(module.bundle.root, id)
+            const id = oldDeps[dep]
+            const parents = getParents(module.bundle.root, id)
             if (parents.length === 1) {
               hmrDelete(module.bundle.root, id)
             }
@@ -149,7 +149,7 @@ function hmrApply(bundle: ParcelBundle, asset: HmrAsset) {
       if (supportsSourceURL) {
         // Global eval. We would use `new Function` here but browser
         // support for source maps is better with eval.
-        ;(0, eval)(asset.output)
+        (0, eval)(asset.output)
       }
 
       const fn = global.parcelHotUpdate[asset.id]
@@ -161,17 +161,17 @@ function hmrApply(bundle: ParcelBundle, asset: HmrAsset) {
 }
 
 function hmrDelete(bundle: ParcelBundle, id: string) {
-  let modules = bundle.modules
+  const modules = bundle.modules
   if (!modules) {
     return
   }
 
   if (modules[id]) {
     // Collect dependencies that will become orphaned when this module is deleted.
-    let deps = modules[id][1]
-    let orphans = []
-    for (let dep in deps) {
-      let parents = getParents(module.bundle.root, deps[dep])
+    const deps = modules[id][1]
+    const orphans = []
+    for (const dep in deps) {
+      const parents = getParents(module.bundle.root, deps[dep])
       if (parents.length === 1) {
         orphans.push(deps[dep])
       }

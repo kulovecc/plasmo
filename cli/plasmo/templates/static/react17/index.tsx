@@ -7,7 +7,7 @@ import * as ReactDOM from "react-dom"
 let __plasmoRoot: HTMLElement = null
 
 document.addEventListener("DOMContentLoaded", () => {
-  if (!!__plasmoRoot) {
+  if (__plasmoRoot) {
     return
   }
 

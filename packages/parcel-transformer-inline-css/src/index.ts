@@ -36,7 +36,7 @@ export default new Transformer({
     asset.setBuffer(res.code)
 
     if (res.dependencies) {
-      for (let dep of res.dependencies) {
+      for (const dep of res.dependencies) {
         const loc = !originalMap
           ? dep.loc
           : remapSourceLocation(dep.loc, originalMap)

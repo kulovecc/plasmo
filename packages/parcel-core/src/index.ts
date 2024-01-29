@@ -95,9 +95,9 @@ export class Parcel {
     await initSourcemaps
     await initHash
 
-    let resolvedOptions = await resolveOptions(this.#initialOptions)
+    const resolvedOptions = await resolveOptions(this.#initialOptions)
     this.#resolvedOptions = resolvedOptions
-    let { config } = await loadParcelConfig(resolvedOptions)
+    const { config } = await loadParcelConfig(resolvedOptions)
     this.#config = new ParcelConfig(config, resolvedOptions)
 
     if (this.#initialOptions.workerFarm) {
@@ -114,7 +114,7 @@ export class Parcel {
     // @ts-ignore QUIRK: upstream def is outdated:
     await resolvedOptions.cache.ensure()
 
-    let { dispose: disposeOptions, ref: optionsRef } =
+    const { dispose: disposeOptions, ref: optionsRef } =
       await this.#farm.createSharedReference(resolvedOptions, false)
     this.#optionsRef = optionsRef
 
@@ -147,12 +147,12 @@ export class Parcel {
   }
 
   async run(): Promise<BuildSuccessEvent> {
-    let startTime = Date.now()
+    const startTime = Date.now()
     if (!this.#initialized) {
       await this._init()
     }
 
-    let result = await this._build({ startTime })
+    const result = await this._build({ startTime })
     await this._end()
 
     if (result.type === "buildFailure") {
@@ -176,7 +176,7 @@ export class Parcel {
     await this.#farm.callAllWorkers("clearConfigCache", [])
 
     try {
-      let buildEvent = await this._build({
+      const buildEvent = await this._build({
         signal: this.#watchAbortController.signal
       })
 
@@ -252,7 +252,7 @@ export class Parcel {
     startTime = Date.now()
   } = {}): Promise<BuildEvent> {
     this.#requestTracker.setSignal(signal)
-    let options = nullthrows(this.#resolvedOptions)
+    const options = nullthrows(this.#resolvedOptions)
     try {
       if (options.shouldProfile) {
         await this.startProfiling()
@@ -263,13 +263,13 @@ export class Parcel {
 
       this.#requestTracker.graph.invalidateOnBuildNodes()
 
-      let request = createParcelBuildRequest({
+      const request = createParcelBuildRequest({
         optionsRef: this.#optionsRef,
         requestedAssetIds: this.#requestedAssetIds,
         signal
       })
 
-      let { bundleGraph, bundleInfo, changedAssets, assetRequests } =
+      const { bundleGraph, bundleInfo, changedAssets, assetRequests } =
         await this.#requestTracker.runRequest(request, { force: true })
 
       this.#requestedAssetIds.clear()
@@ -281,7 +281,7 @@ export class Parcel {
         requestGraphEdgeTypes
       )
 
-      let event = {
+      const event = {
         type: "buildSuccess" as const,
         changedAssets: new Map(
           Array.from(changedAssets).map(([id, asset]) => [
@@ -302,7 +302,7 @@ export class Parcel {
         ),
         buildTime: Date.now() - startTime,
         requestBundle: async (bundle) => {
-          let bundleNode = bundleGraph._graph.getNodeByContentKey(bundle.id)
+          const bundleNode = bundleGraph._graph.getNodeByContentKey(bundle.id)
           invariant(bundleNode?.type === "bundle", "Bundle does not exist")
 
           if (!bundleNode.value.isPlaceholder) {
@@ -316,7 +316,7 @@ export class Parcel {
             }
           }
 
-          for (let assetId of bundleNode.value.entryAssetIds) {
+          for (const assetId of bundleNode.value.entryAssetIds) {
             this.#requestedAssetIds.add(assetId)
           }
 
@@ -328,8 +328,8 @@ export class Parcel {
             this.#watchQueue.add(() => this._startNextBuild())
           }
 
-          let results = await this.#watchQueue.run()
-          let result = results.filter(Boolean).pop()
+          const results = await this.#watchQueue.run()
+          const result = results.filter(Boolean).pop()
           if (result.type === "buildFailure") {
             throw new BuildError(result.diagnostics)
           }
@@ -352,8 +352,8 @@ export class Parcel {
         throw e
       }
 
-      let diagnostic = anyToDiagnostic(e)
-      let event = {
+      const diagnostic = anyToDiagnostic(e)
+      const event = {
         type: "buildFailure" as const,
         diagnostics: Array.isArray(diagnostic) ? diagnostic : [diagnostic]
       }
@@ -375,9 +375,9 @@ export class Parcel {
 
     // TODO: This is where the resolvedOptions - the watch project root, need to be fixed
 
-    let resolvedOptions = nullthrows(this.#resolvedOptions)
-    let opts = getWatcherOptions(resolvedOptions)
-    let sub = await resolvedOptions.inputFS.watch(
+    const resolvedOptions = nullthrows(this.#resolvedOptions)
+    const opts = getWatcherOptions(resolvedOptions)
+    const sub = await resolvedOptions.inputFS.watch(
       resolvedOptions.projectRoot,
       (err, events) => {
         if (err) {
@@ -385,7 +385,7 @@ export class Parcel {
           return
         }
 
-        let isInvalid = this.#requestTracker.respondToFSEvents(
+        const isInvalid = this.#requestTracker.respondToFSEvents(
           events.map((e) => ({
             type: e.type,
             path: toProjectPath(resolvedOptions.projectRoot, e.path)

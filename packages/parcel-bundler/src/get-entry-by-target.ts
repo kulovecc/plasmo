@@ -7,7 +7,7 @@ export function getEntryByTarget(
   bundleGraph: MutableBundleGraph
 ): DefaultMap<string, Map<Asset, Dependency>> {
   // Find entries from assetGraph per target
-  let targets: DefaultMap<string, Map<Asset, Dependency>> = new DefaultMap(
+  const targets: DefaultMap<string, Map<Asset, Dependency>> = new DefaultMap(
     () => new Map()
   )
   bundleGraph.traverse(

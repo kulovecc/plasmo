@@ -133,7 +133,7 @@ function attemptResolve({ specifier, dependency }: ResolverProps) {
     aliasRegex.test(specifier)
   )
 
-  if (!!relevantEntry) {
+  if (relevantEntry) {
     return attemptResolveArray(
       specifier,
       relevantEntry[0],
